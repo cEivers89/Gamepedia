@@ -2,6 +2,8 @@ package com.example.gamepedia;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Transaction;
 
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,20 +27,21 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView gameListView;
-    GameTemplate gameTemplate;
+    RecyclerView gameRecyclerView;
+    GameAdapter gameAdapter;
     ArrayList<GameItem> gameItemsList;
+
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gameListView = findViewById(R.id.game_list_body);
+        gameRecyclerView = findViewById(R.id.game_list_body);
         gameItemsList = new ArrayList<>();
 
         fetchGames();
-
     }
 
     @Override
@@ -50,16 +54,18 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                gameTemplate = new GameTemplate(MainActivity.this, gameItemsList);
-                gameListView.setAdapter(gameTemplate);
+                gameAdapter = new GameAdapter(MainActivity.this, gameItemsList);
+                gameRecyclerView.setAdapter(gameAdapter);
+                gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                gameAdapter.notifyDataSetChanged();
             }
         });
     }
-
     private void fetchGames() {
+
         final List<GameItem> gameList = new ArrayList<>();
         final OkHttpClient client = new OkHttpClient();
-        final Request request = new Request.Builder().url("https://api.rawg.io/api/games?key="
+        final Request request = new Request.Builder().url("https://api.rawg.io/api/games?page_size=100&key="
                 + Constants.API_KEY).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -84,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     addGamesToUI(resultsArray, client, gameList);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -93,8 +100,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Transaction
     private void addGamesToUI(JSONArray resultsArray, final OkHttpClient client, final List<GameItem> gameList) {
+        // Randomize list of games
+        Random random = new Random();
+        int randomStart = random.nextInt(resultsArray.length());
+        int randomEnd = randomStart + 20;
+        if (randomEnd > resultsArray.length()) {
+            randomEnd = resultsArray.length();
+        }
         // For every item in game_files, get attributes. Add to db
-        for (int i = 0; i < resultsArray.length(); i++) {
+        for (int i = randomStart; i < randomEnd; i++) {
             try {
                 JSONObject jsonGameObject;
                 jsonGameObject = new JSONObject(resultsArray.get(i).toString());
