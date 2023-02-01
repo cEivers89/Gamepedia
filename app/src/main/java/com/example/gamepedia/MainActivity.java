@@ -4,12 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Transaction;
 
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     ListView gameListView;
     GameTemplate gameTemplate;
     ArrayList<GameItem> gameItemsList;
-    //DatabaseDAO db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
         gameListView = findViewById(R.id.game_list_body);
         gameItemsList = new ArrayList<>();
-       // db = GameDatabase.getDatabase(MainActivity.this).gameDatabase();
 
-        downloadDatabase();
-        //new LoadDatabaseTask().execute();
+        fetchGames();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        downloadDatabase();
+        fetchGames();
     }
 
     private void updateView() {
@@ -61,20 +56,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*private class LoadDatabaseTask extends AsyncTask<Void, Void, List<GameItem>> {
-        @Override
-        protected List<GameItem> doInBackground(Void... voids) {
-            return db.getGameItemList();
-        }
-
-        protected void onPostExecute(List<GameItem> result) {
-            gameItemsList = (ArrayList<GameItem>) result;
-            gameTemplate = new GameTemplate(MainActivity.this, gameItemsList, db);
-            gameListView.setAdapter(gameTemplate);
-        }
-    } */
-
-    private void downloadDatabase() {
+    private void fetchGames() {
         final List<GameItem> gameList = new ArrayList<>();
         final OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder().url("https://api.rawg.io/api/games?key="
@@ -101,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return;
                     }
-                    addGamesToDb(resultsArray, client, gameList);
+                    addGamesToUI(resultsArray, client, gameList);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -110,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Transaction
-    private void addGamesToDb(JSONArray resultsArray, final OkHttpClient client, final List<GameItem> gameList) {
+    private void addGamesToUI(JSONArray resultsArray, final OkHttpClient client, final List<GameItem> gameList) {
         // For every item in game_files, get attributes. Add to db
         for (int i = 0; i < resultsArray.length(); i++) {
             try {
