@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView gameRecyclerView;
     private GameAdapter gameAdapter;
+    private HomeAdapter homeAdapter;
 
     ArrayList<GameItem> gameItemsList;
 
@@ -52,10 +53,14 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                gameAdapter = new GameAdapter(MainActivity.this, gameItemsList);
+                homeAdapter = new HomeAdapter(MainActivity.this, gameItemsList);
+                gameRecyclerView.setAdapter(homeAdapter);
+                gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                homeAdapter.notifyDataSetChanged();
+                /*gameAdapter = new GameAdapter(MainActivity.this, gameItemsList);
                 gameRecyclerView.setAdapter(gameAdapter);
                 gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                gameAdapter.notifyDataSetChanged();
+                gameAdapter.notifyDataSetChanged();*/
             }
         });
     }

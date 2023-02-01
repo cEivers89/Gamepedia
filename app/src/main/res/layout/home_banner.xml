@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:orientation="vertical"
-    android:id="@+id/viewPager_item">
+    android:id="@+id/view_banner_item">
 
     <ImageView
         android:id="@+id/game_image_banner"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         tools:ignore="contentDescription" />
-
 </LinearLayout>

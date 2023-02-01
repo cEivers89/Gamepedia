@@ -35,7 +35,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
             releaseDateText = view.findViewById(R.id.release_date_text);
         }
     }
-
     @NonNull
     @Override
     public GameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
