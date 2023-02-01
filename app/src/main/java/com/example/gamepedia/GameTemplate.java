@@ -18,7 +18,7 @@ public class GameTemplate extends BaseAdapter {
     private final Activity context;
     ArrayList<GameItem> games;
 
-    public GameTemplate(Activity context, ArrayList<GameItem> games, DatabaseDAO db) {
+    public GameTemplate(Activity context, ArrayList<GameItem> games) {
         this.context = context;
         this.games = games;
     }
