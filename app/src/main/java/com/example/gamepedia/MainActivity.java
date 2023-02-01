@@ -8,7 +8,6 @@ import androidx.room.Transaction;
 
 import android.os.Bundle;
 import android.text.Html;
-import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,10 +27,9 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView gameRecyclerView;
-    GameAdapter gameAdapter;
-    ArrayList<GameItem> gameItemsList;
+    private GameAdapter gameAdapter;
 
-    private int page = 1;
+    ArrayList<GameItem> gameItemsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchGames();
+        //fetchGames();
     }
 
-    private void updateView() {
+    private void updateGameView() {
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -62,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void fetchGames() {
-
         final List<GameItem> gameList = new ArrayList<>();
         final OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder().url("https://api.rawg.io/api/games?page_size=100&key="
@@ -141,6 +138,6 @@ public class MainActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
         }
-        updateView();
+        updateGameView();
     }
 }
