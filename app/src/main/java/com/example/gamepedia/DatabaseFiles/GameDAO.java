@@ -3,22 +3,25 @@ package com.example.gamepedia.DatabaseFiles;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.gamepedia.GameFiles.GameItem;
 
 import java.util.List;
 
 /**
- * Data Access Object (DAO) interface to handle database operations
+ * Data Access Object (DAO) class to handle database operations
  * */
 @Dao
-public interface GameDAO {
+public abstract class GameDAO {
     @Query("SELECT * FROM GAMES")
-    List<GameItem> getAllGames();
-
+    public abstract List<GameItem> getAllGames();
     @Insert
-    void insertGames(GameItem... games);
+    public abstract void insert(GameItem gameItem);
+    @Update
+    public abstract void update(GameItem gameItem);
 
-    @Query("DELETE FROM GAMES")
-    void deleteAllGames();
+    public void addGameItem(GameItem gameItem) { insert(gameItem); }
+
+    public void updateGameItem(GameItem gameItem) { update(gameItem); }
 }

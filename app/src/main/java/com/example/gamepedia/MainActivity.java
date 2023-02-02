@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.room.Transaction;
 
 import android.os.Bundle;
 import android.text.Html;
 
+import com.example.gamepedia.DatabaseFiles.GameDAO;
+import com.example.gamepedia.DatabaseFiles.GameDatabase;
 import com.example.gamepedia.GameFiles.GameAdapter;
 import com.example.gamepedia.GameFiles.GameHeaderAdapter;
 import com.example.gamepedia.GameFiles.GameItem;
@@ -36,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private GameHeaderAdapter gameHeaderAdapter;
     // List of GameItem objects
     ArrayList<GameItem> gameItemsList;
-    // Used to check if data from API has been updated
-    boolean dataUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
