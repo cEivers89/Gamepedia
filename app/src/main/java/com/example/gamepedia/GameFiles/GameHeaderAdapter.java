@@ -1,4 +1,4 @@
-package com.example.gamepedia;
+package com.example.gamepedia.GameFiles;
 
 import static com.example.gamepedia.Constants.fetchImage;
 
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.gamepedia.R;
 
 import java.util.ArrayList;
 

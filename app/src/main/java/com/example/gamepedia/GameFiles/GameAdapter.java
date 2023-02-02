@@ -1,4 +1,4 @@
-package com.example.gamepedia;
+package com.example.gamepedia.GameFiles;
 
 import static com.example.gamepedia.Constants.fetchImage;
 
@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.gamepedia.R;
+
 import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {

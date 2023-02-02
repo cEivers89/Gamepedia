@@ -1,4 +1,4 @@
-package com.example.gamepedia;
+package com.example.gamepedia.GameFiles;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

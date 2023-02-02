@@ -9,6 +9,10 @@ import androidx.room.Transaction;
 import android.os.Bundle;
 import android.text.Html;
 
+import com.example.gamepedia.GameFiles.GameAdapter;
+import com.example.gamepedia.GameFiles.GameHeaderAdapter;
+import com.example.gamepedia.GameFiles.GameItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +29,15 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    // Mainly variables used for UI updates
     RecyclerView gameRecyclerView;
     RecyclerView headerRecyclerView;
     private GameAdapter gameAdapter;
     private GameHeaderAdapter gameHeaderAdapter;
+    // List of GameItem objects
     ArrayList<GameItem> gameItemsList;
+    // Used to check if data from API has been updated
+    boolean dataUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
