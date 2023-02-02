@@ -27,9 +27,9 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView gameRecyclerView;
+    RecyclerView headerRecyclerView;
     private GameAdapter gameAdapter;
-    private HomeAdapter homeAdapter;
-
+    private GameHeaderAdapter gameHeaderAdapter;
     ArrayList<GameItem> gameItemsList;
 
     @Override
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         gameRecyclerView = findViewById(R.id.game_list_body);
+        headerRecyclerView = findViewById(R.id.game_list_header);
         gameItemsList = new ArrayList<>();
 
         fetchGames();
@@ -46,21 +47,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //fetchGames();
     }
 
     private void updateGameView() {
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                homeAdapter = new HomeAdapter(MainActivity.this, gameItemsList);
-                gameRecyclerView.setAdapter(homeAdapter);
-                gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                homeAdapter.notifyDataSetChanged();
-                /*gameAdapter = new GameAdapter(MainActivity.this, gameItemsList);
+                // Body games list
+                gameAdapter = new GameAdapter(MainActivity.this, gameItemsList);
                 gameRecyclerView.setAdapter(gameAdapter);
-                gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                gameAdapter.notifyDataSetChanged();*/
+                gameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.VERTICAL, false));
+                // Header games list
+                gameHeaderAdapter = new GameHeaderAdapter(MainActivity.this, gameItemsList);
+                headerRecyclerView.setAdapter(gameHeaderAdapter);
+                headerRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.HORIZONTAL, false));
+                gameAdapter.notifyDataSetChanged();
+                gameHeaderAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
                     // Fetch game_files list as a JSON list
                     if (!response.isSuccessful()) {
