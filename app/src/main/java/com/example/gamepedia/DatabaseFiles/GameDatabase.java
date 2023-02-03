@@ -11,5 +11,5 @@ import com.example.gamepedia.GameFiles.GameItem;
  * */
 @Database(entities = {GameItem.class}, version = 1, exportSchema = false)
 public abstract class GameDatabase extends RoomDatabase {
-    public abstract GameDAO gameDatabase();
+    public abstract GameDAO gameDAO();
 }
