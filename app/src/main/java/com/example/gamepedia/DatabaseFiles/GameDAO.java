@@ -21,7 +21,16 @@ public abstract class GameDAO {
     @Update
     public abstract void update(GameItem gameItem);
 
-    public void addGameItem(GameItem gameItem) { insert(gameItem); }
+    public void addGameItem(GameItem gameItem) {
+        List<GameItem> existingGames = getAllGames();
+        for (GameItem existingGame : existingGames) {
+            if (existingGame.getId().equals(gameItem.getId())) {
+                update(gameItem);
+                return;
+            }
+        }
+        insert(gameItem);
+    }
 
     public void updateGameItem(GameItem gameItem) { update(gameItem); }
 }
