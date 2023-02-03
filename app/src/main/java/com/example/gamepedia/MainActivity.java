@@ -10,7 +10,7 @@ import androidx.room.Transaction;
 import android.os.Bundle;
 import android.text.Html;
 
-import com.example.gamepedia.DatabaseFiles.GameDAO;
+import com.example.gamepedia.DatabaseFiles.AppExecutors;
 import com.example.gamepedia.DatabaseFiles.GameDatabase;
 import com.example.gamepedia.GameFiles.GameAdapter;
 import com.example.gamepedia.GameFiles.GameHeaderAdapter;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private GameHeaderAdapter gameHeaderAdapter;
     // List of GameItem objects
     ArrayList<GameItem> gameItemsList;
+    private GameDatabase gameDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +51,22 @@ public class MainActivity extends AppCompatActivity {
         headerRecyclerView = findViewById(R.id.game_list_header);
         gameItemsList = new ArrayList<>();
 
-        fetchGames();
+        gameDatabase = Room.databaseBuilder(getApplicationContext(),GameDatabase.class, "game_db").build();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        fetchGames();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        gameDatabase.close();
+    }
+
 
     private void updateGameView() {
         MainActivity.this.runOnUiThread(new Runnable() {
@@ -69,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
                 gameHeaderAdapter = new GameHeaderAdapter(MainActivity.this, gameItemsList);
                 headerRecyclerView.setAdapter(gameHeaderAdapter);
                 headerRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.HORIZONTAL, false));
+                // Replace gameList with the items from the database
+                gameItemsList.clear();
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    gameItemsList.addAll(gameDatabase.gameDAO().getAllGames());
+                });
                 gameAdapter.notifyDataSetChanged();
                 gameHeaderAdapter.notifyDataSetChanged();
             }
@@ -144,6 +160,12 @@ public class MainActivity extends AppCompatActivity {
                     gameList.add(new GameItem(id, name, image, description, rating, metacritic, released, false));
                     gameItemsList.clear();
                     gameItemsList.addAll(gameList);
+                    gameDatabase.runInTransaction(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameDatabase.gameDAO().addGameItem(new GameItem(id, name, image, description, rating, metacritic, released, false));
+                        }
+                    });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
