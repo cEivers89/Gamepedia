@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.gamepedia.R;
 
@@ -37,7 +39,7 @@ public class GameHeaderAdapter extends RecyclerView.Adapter<GameHeaderAdapter.Vi
     @Override
     public GameHeaderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.home_banner, parent, false);
+                .inflate(R.layout.game_list_header, parent, false);
         return new ViewHolder(view);
     }
 
