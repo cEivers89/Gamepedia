@@ -1,11 +1,12 @@
 package com.example.gamepedia.GameFiles;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import org.json.JSONObject;
 
 @Entity(tableName = "GAMES")
 public class GameItem {
@@ -35,7 +36,6 @@ public class GameItem {
     public boolean favorite;
     @ColumnInfo(name = "LAST_UPDATE")
     private long timeStamp;
-
 
 
     public GameItem(@NonNull String id, String name, String image, String description, String rating, String metacritic, String releaseDate, boolean favorite, long timeStamp) {
@@ -118,6 +118,5 @@ public class GameItem {
     public long getTimeStamp() { return timeStamp; }
 
     public void setTimeStamp(long timeStamp) { this.timeStamp = timeStamp; }
-
 }
 
