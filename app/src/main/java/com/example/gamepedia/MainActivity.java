@@ -1,5 +1,7 @@
 package com.example.gamepedia;
 
+import static com.example.gamepedia.Constants.API_KEY;
+import static com.example.gamepedia.Constants.API_URL;
 import static com.example.gamepedia.Constants.page;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 
 import com.example.gamepedia.DatabaseFiles.AppExecutors;
 import com.example.gamepedia.DatabaseFiles.DatabaseSingleton;
@@ -32,12 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     // Mainly variables used for UI updates
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // List of GameItem objects
     ArrayList<GameItem> gameItemsList;
     private GameDatabase gameDatabase;
+    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
             headerRecyclerView.setAdapter(gameHeaderAdapter);
             headerRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.HORIZONTAL, false));
             // Replace gameList with the items from the database
-            gameItemsList.clear();
             AppExecutors.getInstance().diskIO().execute(() -> {
                 gameItemsList.addAll(gameDatabase.gameDAO().getAllGames());
                 Collections.shuffle(gameItemsList);
@@ -111,53 +112,50 @@ public class MainActivity extends AppCompatActivity {
         long hours = TimeUnit.MINUTES.toHours(minutes);
         return hours < 24;
     }
-
     private void fetchGames() {
-            // If data is not up to date, make the API call
-            final List<GameItem> gameList = new ArrayList<>();
-            final OkHttpClient client = new OkHttpClient();
-            final Request request = new Request.Builder().url("https://api.rawg.io/api/games?&page_size=20&page=" + page + "&key="
-                    + Constants.API_KEY).build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) {
-                    AppExecutors.getInstance().diskIO().execute(() -> {
-                        List<GameItem> gameItems = gameDatabase.gameDAO().getAllGames();
-                        if (!gameItems.isEmpty() && isDataUpToDate(gameItems.get(0).getTimeStamp())) {
-                            // Use data from the database to update the UI
-                            gameItemsList.clear();
-                            gameItemsList.addAll(gameItems);
-                            updateGameView();
+        final List<GameItem> gameList = new ArrayList<>();
+        final Request request = new Request.Builder().url(API_URL + "&page_size=20&page=" + page + "&key=" + API_KEY).build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<GameItem> gameItems = gameDatabase.gameDAO().getAllGames();
+                    if (isDataUpToDate(gameItems.get(0).getTimeStamp())) {
+                        // Use data from the database to update the UI
+                        gameItemsList.clear();
+                        gameItemsList.addAll(gameItems);
+                        updateGameView();
+                    }
+                    else {
+                        Response response = client.newCall(request).execute();
+                        if (!response.isSuccessful()) {
+                            Log.e("fetchGames", "Unexpected code " + response);
+                            return;
                         }
-                        else {
-                            try {
-                                // Fetch game_files list as a JSON list
-                                if (!response.isSuccessful()) {
-                                    throw new IOException("Unexpected code " + response);
-                                }
-                                JSONObject jsonGameListObject;
-                                JSONArray resultsArray;
-                                try {
-                                    jsonGameListObject = new JSONObject(response.body().string());
-                                    resultsArray = jsonGameListObject.getJSONArray("results");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    return;
-                                }
-                                addGamesToDb(resultsArray, client, gameList);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                        try (ResponseBody responseBody = response.body()) {
+                            if (responseBody == null) {
+                                Log.e("fetchGames", "Response body is null");
+                                return;
                             }
+                            JSONObject jsonGameListObject;
+                            JSONArray resultsArray;
+                            try {
+                                jsonGameListObject = new JSONObject(responseBody.string());
+                                resultsArray = jsonGameListObject.getJSONArray("results");
+                            } catch (JSONException e) {
+                                Log.e("fetchGames", e.getMessage());
+                                return;
+                            }
+                            addGamesToDb(resultsArray, client, gameList);
                         }
-                    });
+                    }
+                } catch (IOException e) {
+                    Log.e("fetchGames", e.getMessage());
                 }
-        });
+            }
+        }).start();
     }
+
     @Transaction
     private void addGamesToDb(JSONArray resultsArray, final OkHttpClient client, final List<GameItem> gameList) {
         // For every item in game_files, get attributes. Add to db
@@ -167,18 +165,37 @@ public class MainActivity extends AppCompatActivity {
                 String id = game.getString("id");
                 GameItem gameItem = gameDatabase.gameDAO().getGameById(id);
                 if (gameItem == null) {
-                    // Game not found in database
-                    String name = game.getString("name");
-                    String rating = Double.toString(game.getDouble("rating"));
-                    String metacritic = Integer.toString(game.getInt("metacritic"));
-                    String image = game.getString("background_image");
-                    String released = game.getString("released");
-                    String description = Html.fromHtml(game.getString("description"),
-                            Html.FROM_HTML_MODE_COMPACT).toString();
-                    gameList.add(new GameItem(id, name, image, description, rating, metacritic, released, false, System.currentTimeMillis()));
+                    final Request innerRequest = new Request.Builder().url("https://api.rawg.io/api/games/" + id + "?key=" + Constants.API_KEY).build();
+                    try (Response responseGameDetails = client.newCall(innerRequest).execute()) {
+                        if (!responseGameDetails.isSuccessful()) {
+                            throw new IOException("Unexpected code " + responseGameDetails);
+                        }
+                        // Game not found in database
+                        String name = game.getString("name");
+                        String rating = Double.toString(game.getDouble("rating"));
+                        String metacritic = Integer.toString(game.optInt("metacritic", 0));
+                        String image = game.getString("background_image");
+                        String released = game.getString("released");
+                        String description = "";
+                        if (game.has("description")) {
+                            description = Html.fromHtml(game.getString("description"),
+                                    Html.FROM_HTML_MODE_COMPACT).toString();
+                        }
+                        else {
+                            description = "No description available";
+                        }
+                        gameList.add(new GameItem(id, name, image, description, rating, metacritic, released, false, System.currentTimeMillis()));
+                    } catch (JSONException e) {
+                        throw new JSONException("Error parsing JSON response: " + e.getMessage());
+                    }
+                }
+                else {
+                    gameList.add(gameItem);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("addGamesToDb", e.getMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
         if (!gameList.isEmpty()) {
@@ -188,31 +205,10 @@ public class MainActivity extends AppCompatActivity {
             updateGameView();
         }
     }
-
-    /**The below code block may not be used. Saving it for testing purposes
-     * Trying to test without the use of another API call*/
-    /*
-                final Request innerRequest = new Request.Builder().url("https://api.rawg.io/api/games/" + id + "?key=" + Constants.API_KEY).build();
-                Response responseGameDetails = client.newCall(innerRequest).execute();
-                if (!responseGameDetails.isSuccessful()) {
-                    throw new IOException("Unexpected code " + responseGameDetails);
-                }
-                try {
-                    JSONObject jsonGameDetailsObject = new JSONObject(responseGameDetails.body().string());
-                    String name = jsonGameObject.getString("name");
-                    String rating = Double.toString(jsonGameObject.getDouble("rating"));
-                    String metacritic = Integer.toString(jsonGameObject.getInt("metacritic"));
-                    String image = jsonGameObject.getString("background_image");
-                    String released = jsonGameObject.getString("released");
-                    String description = Html.fromHtml(jsonGameDetailsObject.getString("description"),
-                            Html.FROM_HTML_MODE_COMPACT).toString();
-  */
-
-
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    /* private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE GAMES ADD COLUMN LAST_UPDATE INTEGER NOT NULL DEFAULT 0");
         }
-    };
+    }; */
 }
