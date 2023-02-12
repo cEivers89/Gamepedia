@@ -34,7 +34,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         TextView nameText;
         TextView ratingText;
         TextView releaseDateText;
-
         LinearLayout gameRow;
 
         public ViewHolder(View view) {
@@ -64,7 +63,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         holder.gameRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameDetails(holder.getAdapterPosition());
+                if (holder.gameRow.getWindowToken() != null) {
+                    gameDetails(holder.getAdapterPosition());
+                }
             }
         });
     }
@@ -74,7 +75,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         return games.size();
     }
 
-    public void gameDetails(final int position) {
+    private void gameDetails(final int position) {
         ImageView gameDetailsImage;
         TextView nameDetailsText;
         TextView metacriticDetailsText;
