@@ -1,4 +1,7 @@
-package com.example.gamepedia;
+package com.example.gamepedia.GameFiles;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -31,8 +34,11 @@ public class GameItem {
 
     @ColumnInfo(name = "FAVORITE")
     public boolean favorite;
+    @ColumnInfo(name = "LAST_UPDATE")
+    private long timeStamp;
 
-    public GameItem(@NonNull String id, String name, String image, String description, String rating, String metacritic, String releaseDate, boolean favorite) {
+
+    public GameItem(@NonNull String id, String name, String image, String description, String rating, String metacritic, String releaseDate, boolean favorite, long timeStamp) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -41,6 +47,7 @@ public class GameItem {
         this.metacritic = metacritic;
         this.releaseDate = releaseDate;
         this.favorite = favorite;
+        this.timeStamp = timeStamp;
     }
 
     @NonNull
@@ -107,5 +114,9 @@ public class GameItem {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
+    public long getTimeStamp() { return timeStamp; }
+
+    public void setTimeStamp(long timeStamp) { this.timeStamp = timeStamp; }
 }
 
