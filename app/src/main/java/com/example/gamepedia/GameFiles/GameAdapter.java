@@ -17,15 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamepedia.R;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     private final Activity context;
-    private ArrayList<GameItem> games;
-
+    private List<GameItem> games;
     private PopupWindow window;
 
-    public GameAdapter(Activity context, ArrayList<GameItem> games) {
+    public GameAdapter(Activity context, List<GameItem> games) {
         this.context = context;
         this.games = games;
     }
@@ -55,7 +54,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull GameAdapter.ViewHolder holder, int position) {
-
         fetchImage(games.get(position).getImage(), holder.gameImage, context);
         holder.nameText.setText(games.get(position).getName());
         holder.ratingText.setText(games.get(position).getRating());
@@ -64,43 +62,15 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 if (holder.gameRow.getWindowToken() != null) {
-                    gameDetails(holder.getAdapterPosition());
+                    GameDetailsPopupWindow popupWindow = new GameDetailsPopupWindow(context, games.get(holder.getAdapterPosition()));
+                    popupWindow.show();
                 }
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return games.size();
     }
 
-    private void gameDetails(final int position) {
-        ImageView gameDetailsImage;
-        TextView nameDetailsText;
-        TextView metacriticDetailsText;
-        TextView releaseDateDetailsText;
-        TextView detailsDescription;
-        ImageView favoriteDetailsImage;
-
-        LayoutInflater inflater = context.getLayoutInflater();
-        View layout = inflater.inflate(R.layout.game, context.findViewById(R.id.game_details_layout));
-
-        window = new PopupWindow(layout, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
-        window.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
-        gameDetailsImage = layout.findViewById(R.id.gameImage);
-        nameDetailsText = layout.findViewById(R.id.nameText);
-        metacriticDetailsText = layout.findViewById(R.id.metacriticText);
-        releaseDateDetailsText = layout.findViewById(R.id.releaseDateText);
-        detailsDescription = layout.findViewById(R.id.descriptionText);
-        favoriteDetailsImage = layout.findViewById(R.id.favoriteImage);
-
-        fetchImage(games.get(position).getImage(), gameDetailsImage, context);
-        nameDetailsText.setText(games.get(position).getName());
-        metacriticDetailsText.setText(games.get(position).getMetacritic());
-        releaseDateDetailsText.setText(games.get(position).getReleaseDate());
-        detailsDescription.setText(games.get(position).getDescription());
-        favoriteDetailsImage.setImageResource(games.get(position).isFavorite() ? R.drawable.ic_favorite_heart : R.drawable.ic_empty_heart);
-    }
 }
