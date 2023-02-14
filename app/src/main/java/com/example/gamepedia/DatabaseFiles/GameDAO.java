@@ -22,30 +22,6 @@ public abstract class GameDAO {
     public abstract GameItem getGameById(String id);
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertGames(List<GameItem> gameItems);
-
-    @Insert
-    public abstract void insert(GameItem gameItem);
-
     @Update
     public abstract void update(GameItem gameItem);
-
-
-    public void addGameItem(GameItem gameItem) {
-        gameItem.setTimeStamp(System.currentTimeMillis());
-        List<GameItem> existingGames = getAllGames();
-        for (GameItem existingGame : existingGames) {
-            if (existingGame.getId().equals(gameItem.getId())) {
-                gameItem.setTimeStamp(System.currentTimeMillis());
-                update(gameItem);
-                return;
-            }
-        }
-        gameItem.setTimeStamp(System.currentTimeMillis());
-        insert(gameItem);
-    }
-
-    public void updateGameItem(GameItem gameItem) {
-        gameItem.setTimeStamp(System.currentTimeMillis());
-        update(gameItem);
-    }
 }
