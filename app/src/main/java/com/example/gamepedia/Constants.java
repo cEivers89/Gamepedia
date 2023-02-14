@@ -15,7 +15,6 @@ public class Constants {
 
     public static final String API_URL = "https://api.rawg.io/api/games?";
 
-
     public static void fetchImage(String url, ImageView imageView, Context context) {
         Glide.with(context).load(url).centerCrop().into(imageView);
     }
