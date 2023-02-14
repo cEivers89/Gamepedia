@@ -47,7 +47,5 @@
             android:contentDescription="Home"
             android:background="@color/black"
             android:src="@drawable/home_icon" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
