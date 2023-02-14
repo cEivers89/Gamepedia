@@ -2,24 +2,34 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="1dp"
+    android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/game_details_layout"
-    android:background="@color/black"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/black">
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/gameImage"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="200dp"
             tools:ignore="ContentDescription" />
 
+        <ImageView
+            android:id="@+id/close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/close_icon"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Close button" />
     </RelativeLayout>
 
     <LinearLayout
