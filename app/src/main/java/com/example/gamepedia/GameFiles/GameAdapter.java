@@ -3,13 +3,11 @@ package com.example.gamepedia.GameFiles;
 import static com.example.gamepedia.Constants.fetchImage;
 
 import android.app.Activity;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +20,6 @@ import java.util.List;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     private final Activity context;
     private List<GameItem> games;
-    private PopupWindow window;
 
     public GameAdapter(Activity context, List<GameItem> games) {
         this.context = context;

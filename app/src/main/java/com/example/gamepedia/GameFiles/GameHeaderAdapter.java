@@ -3,26 +3,21 @@ package com.example.gamepedia.GameFiles;
 import static com.example.gamepedia.Constants.fetchImage;
 
 import android.app.Activity;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamepedia.R;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameHeaderAdapter extends RecyclerView.Adapter<GameHeaderAdapter.ViewHolder> {
     private final Activity context;
     private List<GameItem> games;
-    private PopupWindow window;
 
     public GameHeaderAdapter(Activity context, List<GameItem> games) {
         this.context = context;
@@ -64,6 +59,6 @@ public class GameHeaderAdapter extends RecyclerView.Adapter<GameHeaderAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return Math.min(games.size(), 5);
+        return games.size();
     }
 }
