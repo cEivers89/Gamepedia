@@ -20,6 +20,10 @@ public abstract class GameDAO {
     public abstract List<GameItem> getAllGames();
     @Query("SELECT * FROM GAMES WHERE id = :id")
     public abstract GameItem getGameById(String id);
+    @Query("SELECT * FROM GAMES WHERE release_date BETWEEN date('now', '-60 day') AND date('now', 'localtime')")
+    public abstract List<GameItem> getGames60Days();
+    @Query("SELECT * from games where metacritic >= 80 and (RELEASE_DATE between date('now', '-1 year') and date('now', 'localtime'))")
+    public abstract List<GameItem> getTopGames();
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertGames(List<GameItem> gameItems);
     @Update
