@@ -50,6 +50,10 @@ public class GameItem {
         this.timeStamp = timeStamp;
     }
 
+    public GameItem() {
+        super();
+    }
+
     @NonNull
     public String getId() {
         return id;
