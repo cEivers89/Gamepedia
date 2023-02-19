@@ -4,18 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/dark_gray"
     tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/top_games_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Top Games"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/game_list_header"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/game_list_header"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        app:layout_constraintBottom_toTopOf="@id/recent_games_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_games_title" />
+
+    <TextView
+        android:id="@+id/recent_games_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recent Releases"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="2dp"
+        app:layout_constraintBottom_toTopOf="@id/game_list_body"
+        app:layout_constraintTop_toBottomOf="@id/game_list_header" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/game_list_body"
@@ -24,7 +46,7 @@
         app:layout_constraintBottom_toTopOf="@+id/game_footer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/game_list_header" />
+        app:layout_constraintTop_toBottomOf="@+id/recent_games_title" />
 
         <!-- Items dynamically inserted -->
 
@@ -33,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:orientation="horizontal"
-        android:background="@color/black"
+        android:background="@color/dark_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -45,7 +67,7 @@
             android:layout_marginHorizontal="175dp"
             android:layout_marginTop="20dp"
             android:contentDescription="Home"
-            android:background="@color/black"
+            android:background="@color/dark_gray"
             android:src="@drawable/home_icon" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
