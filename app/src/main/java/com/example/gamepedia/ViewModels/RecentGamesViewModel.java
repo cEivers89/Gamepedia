@@ -1,4 +1,4 @@
-package com.example.gamepedia.GameFiles;
+package com.example.gamepedia.ViewModels;
 
 import static com.example.gamepedia.Constants.API_KEY;
 import static com.example.gamepedia.Constants.API_URL;
@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.gamepedia.Constants;
 import com.example.gamepedia.DatabaseFiles.DatabaseSingleton;
 import com.example.gamepedia.DatabaseFiles.GameDatabase;
+import com.example.gamepedia.GameFiles.GameItem;
 import com.example.gamepedia.Gamepedia;
 
 import org.json.JSONArray;
@@ -40,27 +41,24 @@ public class RecentGamesViewModel extends ViewModel {
     public RecentGamesViewModel() {
         gameItemsLiveData = new MutableLiveData<>();
         gameDatabase = DatabaseSingleton.getInstance(Gamepedia.getInstance());
-        fetchRecentGames(120);
+        fetchRecentGames(120); // Can change the amount of days based on feedback/preference
     }
 
-    public LiveData<List<GameItem>> getGameItemsLiveData() {
-        return gameItemsLiveData;
-    }
-
-
+    public LiveData<List<GameItem>> getGameItemsLiveData() { return gameItemsLiveData; }
 
     private void fetchRecentGames(int days) {
         // Calculates current time in milliseconds and 'days' days in milliseconds
         long curTimeMillis = System.currentTimeMillis();
-        long daysMillis = (long) days * 24L * 60L * 60L * 1000L;
+        String today = dateFormat.format(new Date(curTimeMillis));
 
         // Calculate timestamp for 'days' days ago
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(curTimeMillis - daysMillis));
-        String fromDate = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) +
-                "-" + calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.add(Calendar.DAY_OF_MONTH, -days);
+        Date fromDays = calendar.getTime();
+        String fromDate = dateFormat.format(fromDays);
+
         final Request request = new Request.Builder().url(API_URL + "key=" + API_KEY + "&dates=" + fromDate + "," +
-                dateFormat.format(new Date(curTimeMillis))).build();
+                today).build();
 
         new Thread(() -> {
             try {
