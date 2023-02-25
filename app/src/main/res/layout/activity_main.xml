@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,67 +8,34 @@
     android:background="@color/dark_gray"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/top_games_title"
+    <!-- Top Games fragment -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/top_games_fragment"
+        android:name="com.example.gamepedia.Fragments.TopGamesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Top Games"
-        android:textSize="20sp"
-        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/game_list_header"/>
+        tools:layout="@layout/fragment_top_games" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/game_list_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="2dp"
-        app:layout_constraintBottom_toTopOf="@id/recent_games_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_games_title" />
-
-    <TextView
-        android:id="@+id/recent_games_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Recent Releases"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:padding="2dp"
-        app:layout_constraintBottom_toTopOf="@id/game_list_body"
-        app:layout_constraintTop_toBottomOf="@id/game_list_header" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/game_list_body"
+    <!-- Recent releases fragment -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/recent_games_fragment"
+        android:name="com.example.gamepedia.Fragments.RecentGamesFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/game_footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recent_games_title" />
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_view"
+        app:layout_constraintTop_toBottomOf="@+id/top_games_fragment"
+        tools:layout="@layout/recent_games_fragment" />
 
-        <!-- Items dynamically inserted -->
-
-    <LinearLayout
-        android:id="@+id/game_footer"
+    <!-- Bottom navigation view -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:background="@color/dark_gray"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/home_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="175dp"
-            android:layout_marginTop="20dp"
-            android:contentDescription="Home"
-            android:background="@color/dark_gray"
-            android:src="@drawable/home_icon" />
-    </LinearLayout>
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
