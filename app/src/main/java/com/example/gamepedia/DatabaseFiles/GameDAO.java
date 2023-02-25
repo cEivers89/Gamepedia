@@ -24,6 +24,8 @@ public abstract class GameDAO {
     public abstract List<GameItem> getGames120Days();
     @Query("SELECT * from games where metacritic >= 80 and (RELEASE_DATE between date('now', '-1 year') and date('now', 'localtime'))")
     public abstract List<GameItem> getTopGames();
+    @Query("SELECT * FROM GAMES WHERE RELEASE_DATE > date('now') order by release_date asc")
+    public abstract List<GameItem> getUpcomingReleases();
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertGames(List<GameItem> gameItems);
     @Update
