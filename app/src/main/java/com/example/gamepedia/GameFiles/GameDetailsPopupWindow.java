@@ -39,12 +39,10 @@ public class GameDetailsPopupWindow {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenHeight = displayMetrics.heightPixels;
-
         int height = (int) (screenHeight * 0.87);
 
         window = new PopupWindow(layout, LinearLayout.LayoutParams.MATCH_PARENT, height, true);
         window.setFocusable(true);
-        //window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         window.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
 
@@ -62,29 +60,22 @@ public class GameDetailsPopupWindow {
         releaseDateDetailsText.setText(gameItem.getReleaseDate());
         detailsDescription.setText(gameItem.getDescription());
         favoriteDetailsImage.setImageResource(gameItem.isFavorite() ? R.drawable.ic_favorite_heart : R.drawable.ic_empty_heart);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down);
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) { }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        new Handler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                window.dismiss();
-                            }
-                        });
-                    }
+        closeButton.setOnClickListener(v -> {
+            Animation animation1 = AnimationUtils.loadAnimation(context, R.anim.slide_down);
+            animation1.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation1) { }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) { }
-                });
-                layout.startAnimation(animation);
-            }
+                @Override
+                public void onAnimationEnd(Animation animation1) {
+                    new Handler().post(() -> window.dismiss());
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation1) { }
+            });
+            layout.startAnimation(animation1);
         });
     }
 }
