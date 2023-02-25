@@ -2,6 +2,9 @@ package com.example.gamepedia;
 
 import android.app.Application;
 
+/**
+ * Defines a customer "Application" and creates a global singleton instance of it
+ */
 public class Gamepedia extends Application {
     private static Gamepedia instance;
 
