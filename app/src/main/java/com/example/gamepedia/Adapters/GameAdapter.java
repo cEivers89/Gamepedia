@@ -1,4 +1,4 @@
-package com.example.gamepedia.GameFiles;
+package com.example.gamepedia.Adapters;
 
 import static com.example.gamepedia.Constants.fetchImage;
 
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gamepedia.GameFiles.GameDetailsPopupWindow;
+import com.example.gamepedia.GameFiles.GameItem;
 import com.example.gamepedia.R;
 
 import java.util.List;
@@ -55,13 +57,10 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         holder.nameText.setText(games.get(position).getName());
         holder.ratingText.setText(games.get(position).getRating());
         holder.releaseDateText.setText(games.get(position).getReleaseDate());
-        holder.gameRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (holder.gameRow.getWindowToken() != null) {
-                    GameDetailsPopupWindow popupWindow = new GameDetailsPopupWindow(context, games.get(holder.getAdapterPosition()));
-                    popupWindow.show();
-                }
+        holder.gameRow.setOnClickListener(v -> {
+            if (holder.gameRow.getWindowToken() != null) {
+                GameDetailsPopupWindow popupWindow = new GameDetailsPopupWindow(context, games.get(holder.getAdapterPosition()));
+                popupWindow.show();
             }
         });
     }
