@@ -1,4 +1,4 @@
-package com.example.gamepedia.GameFiles;
+package com.example.gamepedia.Adapters;
 
 import static com.example.gamepedia.Constants.fetchImage;
 
@@ -12,14 +12,16 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gamepedia.GameFiles.GameDetailsPopupWindow;
+import com.example.gamepedia.GameFiles.GameItem;
 import com.example.gamepedia.R;
 import java.util.List;
 
-public class GameHeaderAdapter extends RecyclerView.Adapter<GameHeaderAdapter.ViewHolder> {
+public class TopGamesAdapter extends RecyclerView.Adapter<TopGamesAdapter.ViewHolder> {
     private final Activity context;
     private List<GameItem> games;
 
-    public GameHeaderAdapter(Activity context, List<GameItem> games) {
+    public TopGamesAdapter(Activity context, List<GameItem> games) {
         this.context = context;
         this.games = games;
     }
@@ -37,22 +39,19 @@ public class GameHeaderAdapter extends RecyclerView.Adapter<GameHeaderAdapter.Vi
 
     @NonNull
     @Override
-    public GameHeaderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TopGamesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.game_list_header, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameHeaderAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TopGamesAdapter.ViewHolder holder, int position) {
         fetchImage(games.get(position).getImage(), holder.gameImage, context);
-        holder.gameHeaderImageRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (holder.gameHeaderImageRow.getWindowToken() != null) {
-                    GameDetailsPopupWindow popupWindow = new GameDetailsPopupWindow(context, games.get(holder.getAdapterPosition()));
-                    popupWindow.show();
-                }
+        holder.gameHeaderImageRow.setOnClickListener(v -> {
+            if (holder.gameHeaderImageRow.getWindowToken() != null) {
+                GameDetailsPopupWindow popupWindow = new GameDetailsPopupWindow(context, games.get(holder.getAdapterPosition()));
+                popupWindow.show();
             }
         });
     }

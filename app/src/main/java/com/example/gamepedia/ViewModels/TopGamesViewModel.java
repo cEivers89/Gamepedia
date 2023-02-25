@@ -1,4 +1,4 @@
-package com.example.gamepedia.GameFiles;
+package com.example.gamepedia.ViewModels;
 
 import static com.example.gamepedia.Constants.API_KEY;
 import static com.example.gamepedia.Constants.API_URL;
@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.gamepedia.Constants;
 import com.example.gamepedia.DatabaseFiles.DatabaseSingleton;
 import com.example.gamepedia.DatabaseFiles.GameDatabase;
+import com.example.gamepedia.GameFiles.GameItem;
 import com.example.gamepedia.Gamepedia;
 
 import org.json.JSONArray;
@@ -40,7 +41,7 @@ public class TopGamesViewModel extends ViewModel {
     public TopGamesViewModel() {
         topGamesLiveData = new MutableLiveData<>();
         gameDatabase = DatabaseSingleton.getInstance(Gamepedia.getInstance());
-        fetchTopGames(80);
+        fetchTopGames(80); // arguement states what Metacritic score, or higher to pull
     }
 
     public LiveData<List<GameItem>> getTopGamesLiveData() { return topGamesLiveData; }
