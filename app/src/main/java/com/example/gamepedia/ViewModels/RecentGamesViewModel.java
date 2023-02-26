@@ -87,6 +87,7 @@ public class RecentGamesViewModel extends ViewModel {
                         JSONObject jsonGameItem = resultsArray.getJSONObject(i);
                         String id = jsonGameItem.getString("id");
                         GameItem gameItem = gameDatabase.gameDAO().getGameById(id);
+                        // gameItem does not exist in database. Add it
                         if (gameItem == null) {
                             final Request innerRequest = new Request.Builder().url("https://api.rawg.io/api/games/" + id + "?key=" + Constants.API_KEY).build();
                             try (Response responseGameDetails = client.newCall(innerRequest).execute()) {
@@ -104,6 +105,45 @@ public class RecentGamesViewModel extends ViewModel {
                                 newGames.add(new GameItem(id, name, image, description, rating, metacritic, released, false, System.currentTimeMillis()));
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
+                            }
+                        }
+                        // gameItem does exist in database. Check for updates
+                        else {
+                            boolean gameChanged = false;
+                            String rating = Double.toString(jsonGameItem.getDouble("rating"));
+                            if (!gameItem.getRating().equals(rating)) {
+                                gameItem.setRating(rating);
+                                gameChanged = true;
+                            }
+                            String metacritic = Integer.toString(jsonGameItem.optInt("metacritic"));
+                            if (!gameItem.getMetacritic().equals(metacritic)) {
+                                gameItem.setRating(metacritic);
+                                gameChanged = true;
+                            }
+                            String image = jsonGameItem.getString("background_image");
+                            if (!gameItem.getImage().equals(image)) {
+                                gameItem.setImage(image);
+                                gameChanged = true;
+                            }
+                            String released = jsonGameItem.getString("released");
+                            if (!gameItem.getReleaseDate().equals(released)) {
+                                gameItem.setReleaseDate(released);
+                                gameChanged = true;
+                            }
+                            final Request descRequest = new Request.Builder().url("https://api.rawg.io/api/games/" + id + "?key=" + Constants.API_KEY).build();
+                            try (Response responseGameDetails = client.newCall(descRequest).execute()) {
+                                if (!responseGameDetails.isSuccessful()) {
+                                    throw new IOException("Unexpected code " + responseGameDetails);
+                                }
+                                JSONObject jsonGameDetailsObject = new JSONObject(responseGameDetails.body().string());
+                                String description = Html.fromHtml(jsonGameDetailsObject.getString("description"), Html.FROM_HTML_MODE_LEGACY).toString();
+                                if (!gameItem.getDescription().equals(description)) {
+                                    gameItem.setDescription(description);
+                                    gameChanged = true;
+                                }
+                            }
+                            if (gameChanged) {
+                                gameDatabase.gameDAO().updateGame(gameItem);
                             }
                         }
                         if (!newGames.isEmpty()) {
