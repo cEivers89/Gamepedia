@@ -15,13 +15,18 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.gamepedia.DatabaseFiles.DatabaseSingleton;
+import com.example.gamepedia.DatabaseFiles.GameDatabase;
+import com.example.gamepedia.Gamepedia;
 import com.example.gamepedia.R;
 
 
 public class GameDetailsPopupWindow {
     private final Activity context;
     private final GameItem gameItem;
+    private GameDatabase gameDatabase;
     public PopupWindow window;
+
 
     public GameDetailsPopupWindow(Activity context, GameItem gameItem) {
         this.context = context;
@@ -29,6 +34,7 @@ public class GameDetailsPopupWindow {
     }
 
     public void show() {
+        gameDatabase = DatabaseSingleton.getInstance(Gamepedia.getInstance());
         LayoutInflater inflater = context.getLayoutInflater();
         View layout = inflater.inflate(R.layout.game, context.findViewById(R.id.game_details_layout));
 
@@ -59,7 +65,15 @@ public class GameDetailsPopupWindow {
         metacriticDetailsText.setText(gameItem.getMetacritic());
         releaseDateDetailsText.setText(gameItem.getReleaseDate());
         detailsDescription.setText(gameItem.getDescription());
-        favoriteDetailsImage.setImageResource(gameItem.isFavorite() ? R.drawable.ic_favorite_heart : R.drawable.ic_empty_heart);
+        favoriteDetailsImage.setOnClickListener(v -> {
+            boolean isFavorite = !gameItem.isFavorite();
+            gameItem.setFavorite(isFavorite);
+            // TODO: Fix bug with drawable not persistent
+            favoriteDetailsImage.setImageResource(gameItem.isFavorite() ? R.drawable.filled_heart : R.drawable.unfilled_heart);
+            // Update game in database
+            new Thread(() -> gameDatabase.gameDAO().updateGame(gameItem)).start();
+        });
+
 
         closeButton.setOnClickListener(v -> {
             Animation animation1 = AnimationUtils.loadAnimation(context, R.anim.slide_down);
