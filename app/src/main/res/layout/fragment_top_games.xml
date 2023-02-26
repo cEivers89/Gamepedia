@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Top Games title -->
+
+    <TextView
+        android:id="@+id/top_games_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Top Games"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:background="@color/dark_gray"
+        android:paddingStart="10dp"/>
+
+    <!-- Top Games RecyclerView -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/top_games_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dark_gray"
+        android:padding="2dp"/>
+
+</LinearLayout>
