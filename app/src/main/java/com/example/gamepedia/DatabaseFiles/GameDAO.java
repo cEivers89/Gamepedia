@@ -26,8 +26,10 @@ public abstract class GameDAO {
     public abstract List<GameItem> getTopGames();
     @Query("SELECT * FROM GAMES WHERE RELEASE_DATE > date('now') order by release_date asc")
     public abstract List<GameItem> getUpcomingReleases();
+    @Query("SELECT * FROM GAMES WHERE FAVORITE = 1")
+    public abstract List<GameItem> getFavoriteGames();
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertGames(List<GameItem> gameItems);
     @Update
-    public abstract void update(GameItem gameItem);
+    public abstract void updateGame(GameItem gameItem);
 }
